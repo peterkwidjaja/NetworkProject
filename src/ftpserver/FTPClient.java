@@ -11,14 +11,14 @@ public class FTPClient {
     static private Socket dataSocket;
     static BufferedReader controlInput;
     static DataOutputStream controlOutput;
-    static BufferedReader dataInput;
+    static BufferedInputStream dataInput;
     static BufferedOutputStream dataOutput;
     static BufferedWriter bwLog;
     
     private static void setControl(InetAddress IP, int port) throws IOException{
         controlSocket = new Socket(IP, port);
         controlInput = new BufferedReader(new InputStreamReader(controlSocket.getInputStream()));
-        controlOutput = new DataOutputStream(controlSocket.getOutputStream());
+        controlOutput = new DataOutputStream(new BufferedOutputStream(controlSocket.getOutputStream()));
     }
     private static void sendPASV() throws IOException{
         controlOutput.writeBytes("PASV\r\n");
@@ -30,8 +30,8 @@ public class FTPClient {
     } 
     private static void setDataPort(InetAddress IP, int port) throws IOException{
         dataSocket = new Socket(IP, port);
-        dataInput = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
-        dataOutput = new BufferedOutputStream(new DataOutputStream(dataSocket.getOutputStream()));
+        dataInput = new BufferedInputStream(dataSocket.getInputStream());
+        dataOutput = new BufferedOutputStream(dataSocket.getOutputStream());
     }
     private static void sendCommand(String command) throws IOException{
         controlOutput.writeBytes(command);

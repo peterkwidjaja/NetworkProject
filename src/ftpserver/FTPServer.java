@@ -12,7 +12,8 @@ public class FTPServer {
     static String serverIP = "";
     static private ServerSocket welcomeControlSocket, welcomeDataSocket;
     static private Socket controlSocket, dataSocket;
-    static private BufferedReader brControl, brData;
+    static private BufferedReader brControl;
+    static private BufferedInputStream brData;
     static private DataOutputStream outControl;
     static private BufferedOutputStream outData;
     private static void setControl(int port) throws IOException{
@@ -22,13 +23,13 @@ public class FTPServer {
     private static void waitConn() throws IOException{
         controlSocket = welcomeControlSocket.accept();
         brControl = new BufferedReader(new InputStreamReader(controlSocket.getInputStream()));
-        outControl = new DataOutputStream(controlSocket.getOutputStream());
+        outControl = new DataOutputStream(new BufferedOutputStream(controlSocket.getOutputStream()));
     }
     private static void waitData(int port) throws IOException{
         welcomeDataSocket = new ServerSocket(port);
         dataSocket = welcomeDataSocket.accept();
-        brData = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
-        outData = new BufferedOutputStream(new DataOutputStream(dataSocket.getOutputStream()));
+        brData = new BufferedInputStream(dataSocket.getInputStream());
+        outData = new BufferedOutputStream(dataSocket.getOutputStream());
     }
     private static String receiveControl() throws IOException{
         return brControl.readLine();
